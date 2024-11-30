@@ -27,9 +27,9 @@ import java.util.Arrays;
  */
 public class KNN {
     private int _k; // The number of neighbors to consider
-    private double[][] _X_train; // Training data features (generalized to double for flexibility)
-    private int[] _Y_train; // Training data labels
-    private String _distanceMetric; // Distance metric to be used (Euclidean, Manhattan, Cosine)
+    private double[][] _X_train; // Training data 
+    private int[] _Y_train; // Training labels
+    private String _distanceMetric; // Distance metric to be used (Euclidean, Manhattan)
     private static final int DEFAULT_K = 3;
     private static final String[] VALID_DISTANCE_METRICS = {"euclidean", "manhattan"};
 
@@ -37,7 +37,7 @@ public class KNN {
      * Constructor for KNN classifier.
      * 
      * @param k The number of nearest neighbors to consider for classification.
-     * @param distanceMetric The distance metric to use: "euclidean", "manhattan", or "cosine".
+     * @param distanceMetric The distance metric to use: "euclidean", "manhattan".
      * @throws IllegalArgumentException if k is less than 1 or the distance metric is invalid.
      */
     public KNN(int k, String distanceMetric) {
@@ -52,7 +52,7 @@ public class KNN {
      * </p>
      */
     public KNN() {
-        this(DEFAULT_K, "euclidean");
+        this(DEFAULT_K,VALID_DISTANCE_METRICS[0]);
     }
 
     /**
@@ -76,7 +76,7 @@ public class KNN {
     }
 
     /**
-     * Sets the distance metric to use: "euclidean", "manhattan", or "cosine".
+     * Sets the distance metric to use: "euclidean", "manhattan".
      * 
      * @param distanceMetric The distance metric to use.
      * @throws IllegalArgumentException if the distance metric is invalid.
