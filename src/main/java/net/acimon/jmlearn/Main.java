@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("Hello world!");
         CSVLoader loader = new CSVLoader(true); // Headers enabled
-        List<Object[]> rows = loader.loadCSV("/home/acimon/Desktop/java-ml_librery/jmlearn/src/main/resources/datasets/iris_dataset.csv");
+        List<Object[]> rows = loader.loadCSV("src/main/resources/datasets/iris_dataset.csv");
 
         List<List<Double>> trainRows = new ArrayList<>();
         List<Integer> labelRows = new ArrayList<>();
