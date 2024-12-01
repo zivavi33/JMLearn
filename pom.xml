@@ -43,24 +43,34 @@
 
             <!-- Javadoc Plugin for generating Javadoc -->
             <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.3.0</version>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>javadoc</goal> <!-- Goal to generate Javadoc -->
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <!-- Disable deprecated -author flag -->
-                <additionalparam>-no-author</additionalparam>
-                <!-- Output directory for Javadoc -->
-                <destDir>${project.build.directory}/docs</destDir>
-                <accessLevel>protected</accessLevel> <!-- Optional: controls visibility -->
-            </configuration>
-        </plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>javadoc</goal> <!-- Goal to generate Javadoc -->
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Disable deprecated -author flag -->
+                    <additionalparam>-no-author</additionalparam>
+                    <!-- Output directory for Javadoc -->
+                    <destDir>${project.build.directory}/docs</destDir>
+                    <accessLevel>protected</accessLevel> <!-- Optional: controls visibility -->
+                </configuration>
+            </plugin>
+
+            <!-- Exec plugin to run the Main class -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>net.acimon.jmlearn.Main</mainClass> <!-- Fully qualified name of your Main class -->
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
