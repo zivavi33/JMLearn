@@ -11,25 +11,25 @@ import java.util.Arrays;
  * The K-Nearest Neighbors (KNN) algorithm for classification tasks.
  * <p>
  * This class provides a simple implementation of the KNN algorithm, including methods for training and predicting class labels.
- * It also includes validation to ensure correct input values for k and checks for empty data during fitting and prediction.
  * </p>
  *
  * <h2>Key Features</h2>
  * <ul>
  *     <li>Train the model with labeled data using the {@code fit} method.</li>
  *     <li>Make predictions on new data using the {@code predict} method.</li>
- *     <li>Calculate classification accuracy using the static {@code calculate} method from the Accuracy class.</li>
+ *     <li>Calculate classification accuracy using the static {@code accuracy} method that call {@code Accuracy.calculate}.</li>
  *     <li>Custom exceptions for invalid k values and empty datasets.</li>
  * </ul>
  *
- * @see EuclideanDistance for distance calculation
- * @see Accuracy for accuracy calculation
+ * @see EuclideanDistance for euclidean distance calculation.
+ * @see ManhattanDistance for manhattan distance calculation (L1).
+ * @see Accuracy for accuracy calculation.
  */
 public class KNN {
     private int _k; // The number of neighbors to consider
     private double[][] _X_train; // Training data 
     private int[] _Y_train; // Training labels
-    private String _distanceMetric; // Distance metric to be used (Euclidean, Manhattan)
+    private String _distanceMetric; // Distance metric (Euclidean, Manhattan)
     private static final int DEFAULT_K = 3;
     private static final String[] VALID_DISTANCE_METRICS = {"euclidean", "manhattan"};
 
@@ -170,22 +170,27 @@ public class KNN {
             }
         }
 
-        // Sort distances and get the k nearest neighbors' labels
+        // initialize an array with the indices of _X_train as values.
         Integer[] kIndexes = new Integer[_X_train.length];
         for (int i = 0; i < _X_train.length; i++) {
             kIndexes[i] = i;
         }
 
+        // sort the indices array in ascending order based on the distances stored in the distances array.
+        // meaning that kIndexes[0] will hold the index of the _X_train sample with the shortest distance.
         Arrays.sort(kIndexes, (i, j) -> Double.compare(distances[i], distances[j]));
 
-        // Count the occurrences of each label among the nearest k neighbors
+        // Count the occurrences of each label among the nearest k neighbors 
         Map<Integer, Integer> labelCounts = new HashMap<>();
         for (int i = 0; i < _k; i++) {
             int label = _Y_train[kIndexes[i]];
+            // put the label in HashMap where the label is key and value is num of occurrences.
+            // getOrDefault(key, defaultValue) returns the value for the given key if it exists, otherwise returns defaultValue (set to 0).
+            // than we add 1 to increment the occurrences if exists -> value+1 if not -> 0+1
             labelCounts.put(label, labelCounts.getOrDefault(label, 0) + 1);
         }
 
-        // Return the most common label
+        // Return the most common label (the key(lable) of the highest value of in the Map meaning most occurrences).
         return labelCounts.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .get()

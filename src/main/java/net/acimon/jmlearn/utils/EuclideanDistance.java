@@ -1,18 +1,12 @@
 package net.acimon.jmlearn.utils;
 
 /**
- * Utility class for mathematical operations related to machine learning models.
- * <p>
- * This class includes static methods for various operations, including the calculation of Euclidean distance,
- * which is widely used in models such as K-Nearest Neighbors (KNN) and K-Means clustering.
- * </p>
- * 
- * <p><b>Note:</b> This class is intended to be used in machine learning algorithms that rely on distance metrics.</p>
+ * Utility class for calculating Euclidean distance for machine learning models.
  */
 public class EuclideanDistance {
 
     /**
-     * Computes the Euclidean distance between two points represented as arrays of doubles.
+     * Computes the Euclidean distance between two n-dimensional points represented as arrays of doubles.
      * <p>
      * The Euclidean distance is the square root of the sum of the squared differences
      * between corresponding coordinates of two points in n-dimensional space.
