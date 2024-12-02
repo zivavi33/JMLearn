@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.acimon.jmlearn.utils.TypeCaster;
 import net.acimon.jmlearn.utils.CSVLoader;
 import net.acimon.jmlearn.utils.DatasetSplitter;
 import net.acimon.jmlearn.models.neighbors.KNN;
+
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -27,16 +29,19 @@ public class Main {
             trainRows.add(trainRow);
 
             // Convert the 5th element (label) to double for labelRows
-            Double value = Double.parseDouble(row[4].toString());  // Parse the string as a Double
+            // Double value = Double.parseDouble(row[4].toString());  // Parse the string as a Double
+            // TypeCaster typeCaster = new TypeCaster("int");
+            TypeCaster typeCaster = new TypeCaster();
+            int value = typeCaster.castToInt(row[4].toString());
+            labelRows.add(value);
 
-
-            if (value % 1 == 0) {
-                // If it's a whole number, cast to integer
-                labelRows.add((int) value.doubleValue()); // Cast directly to int
-            } else {
-                // If not a whole number, keep it as a double or handle it differently
-                labelRows.add(value.intValue()); // Optionally round if needed
-            }
+            // if (value % 1 == 0) {
+            //     // If it's a whole number, cast to integer
+            //     labelRows.add((int) value.doubleValue()); // Cast directly to int
+            // } else {
+            //     // If not a whole number, keep it as a double or handle it differently
+            //     labelRows.add(value.intValue()); // Optionally round if needed
+            // }
         }
 
         // Convert List<List<Double>> to double[][]
