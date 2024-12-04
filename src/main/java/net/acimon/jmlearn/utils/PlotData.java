@@ -40,14 +40,14 @@ public class PlotData {
 
         // Create a chart
         JFreeChart chart = ChartFactory.createScatterPlot(
-                title,           // Title
-                "X",             // X-axis label
-                "Y",             // Y-axis label
-                dataset,         // Dataset
+                title,           
+                "X",             
+                "Y",             
+                dataset,         
                 PlotOrientation.VERTICAL,
-                true,            // Include legend
-                true,            // Tooltips
-                false            // URLs
+                true,            
+                true,            
+                false          
         );
 
         // Customize colors for each class

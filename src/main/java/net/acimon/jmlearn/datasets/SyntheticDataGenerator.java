@@ -1,25 +1,72 @@
 package net.acimon.jmlearn.datasets;
 
+import net.acimon.jmlearn.utils.CSVLoader;
 import net.acimon.jmlearn.utils.Pair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * The SyntheticDataGenerator class provides methods to generate synthetic datasets for machine learning tasks.
+ * <p>
+ * This class includes methods for generating datasets with different patterns, such as well-separated blobs, 
+ * interleaving half circles (moons), and concentric circles, with options to control noise and clustering.
+ * </p>
+ *
+ * <h2>Key Features</h2>
+ * <ul>
+ *     <li>Generate well-separated blobs using {@code makeBlobs}.</li>
+ *     <li>Create interleaving half circles (moons) with added noise using {@code makeMoons}.</li>
+ *     <li>Generate concentric circles with noise and customizable scaling factor using {@code makeCircles}.</li>
+ * </ul>
+ *
+ * see {@link Pair} for representing a pair of lists (data and labels).
+ * 
+ * <h2>Constructor Summary</h2>
+ * <ul>
+ *     <li>{@link SyntheticDataGenerator#SyntheticDataGenerator(Long)} - Constructs a datagenerator with random seed (accepts null).</li>
+ *     <li>{@link SyntheticDataGenerator#SyntheticDataGenerator()} - Constructs a datagenerator with random seed.</li>
+ * </ul>
+ */
+
 public class SyntheticDataGenerator {
 
     private Random random;
 
-    public SyntheticDataGenerator() {
-        this.random = new Random();
+
+
+    public SyntheticDataGenerator(Long seed) {
+        if (seed != null) {
+            this.random = new Random(seed);
+        } else {
+            this.random = new Random();
+        }
     }
 
-    // Generates a 2D dataset with well-separated blobs
+
+    public SyntheticDataGenerator() {
+        this(null);
+    }
+
+        /**
+     * Generates n-dims dataset with well-separated blobs.
+     * <p>
+     * Each blob is centered at a randomly generated point, and data points are distributed around these centers
+     * with a specified standard deviation.
+     * </p>
+     *
+     * @param nSamples   The total number of data points to generate.
+     * @param nClusters  The number of clusters (blobs).
+     * @param clusterStd The standard deviation of the blobs.
+     * @param nDimensions The number of dimensions for each data point.
+     * @return A {@link Pair} containing the generated data points and their corresponding labels.
+     */
     public Pair<List<double[]>, List<Integer>> makeBlobs(int nSamples, int nClusters, double clusterStd, int nDimensions) {
         List<double[]> data = new ArrayList<>();
         List<Integer> labels = new ArrayList<>();
         List<double[]> centroids = new ArrayList<>();
         
-        // Randomly generate the centers of the clusters
+        
         for (int i = 0; i < nClusters; i++) {
             double[] centroid = new double[nDimensions];
             for (int j = 0; j < nDimensions; j++) {
@@ -34,7 +81,7 @@ public class SyntheticDataGenerator {
             double[] centroid = centroids.get(clusterIndex);
             double[] point = new double[nDimensions];
             
-            // Generate random data point around the centroid
+           
             for (int j = 0; j < nDimensions; j++) {
                 point[j] = centroid[j] + random.nextGaussian() * clusterStd;
             }
@@ -42,36 +89,45 @@ public class SyntheticDataGenerator {
             labels.add(clusterIndex);  // Assign label based on the cluster
         }
 
-        return new Pair<>(data, labels);  // Return Pair of data and labels
+        return new Pair<>(data, labels);  
     }
 
-    // Generates a 2D dataset of interleaving half circles (moons)
+    /**
+     * Generates a 2D dataset of interleaving half circles (moons) with added noise.
+     * <p>
+     * The data points are generated in two semi-circular shapes.
+     * </p>
+     *
+     * @param nSamples The total number of data points to generate.
+     * @param noise The noise level added to the data points.
+     * @return A {@link Pair} containing the generated data points and their corresponding labels.
+     */
     public Pair<List<double[]>, List<Integer>> makeMoons(int nSamples, double noise) {
         List<double[]> data = new ArrayList<>();
         List<Integer> labels = new ArrayList<>();
     
-        // Define the vertical distance between the centers of the two moons
-        double verticalShift = 0.25;  // Set the desired vertical distance between the moons (e.g., 0.5)
+        
+        double verticalShift = 0.25; 
     
-        // Generate points for the first moon (upper half-circle)
+        // points for the first moon (upper half-circle)
         for (int i = 0; i < nSamples / 2; i++) {
             double[] point1 = new double[2];
-            double angle = Math.PI * i / (nSamples / 2);  // Angle for the first half-moon
-            point1[0] = Math.cos(angle);  // X coordinate
-            point1[1] = Math.sin(angle);  // Y coordinate
+            double angle = Math.PI * i / (nSamples / 2);  // Angle 
+            point1[0] = Math.cos(angle);  // X 
+            point1[1] = Math.sin(angle);  // Y 
     
             // Add noise
             point1[0] += random.nextGaussian() * noise;
             point1[1] += random.nextGaussian() * noise;
     
             data.add(point1);
-            labels.add(0); // Label for the first moon
+            labels.add(0); 
         }
     
-        // Generate points for the second moon (lower half-circle)
+        // points second moon (lower half-circle)
         for (int i = 0; i < nSamples / 2; i++) {
             double[] point2 = new double[2];
-            double angle = Math.PI * i / (nSamples / 2);  // Angle for the second half-moon
+            double angle = Math.PI * i / (nSamples / 2);  // Angle 
             point2[0] = Math.cos(angle) + 1;  // X coordinate (shifted horizontally to the right)
             point2[1] = -Math.sin(angle) + verticalShift;  // Y coordinate (shifted vertically by verticalShift)
     
@@ -80,13 +136,24 @@ public class SyntheticDataGenerator {
             point2[1] += random.nextGaussian() * noise;
     
             data.add(point2);
-            labels.add(1); // Label for the second moon
+            labels.add(1); 
         }
     
-        return new Pair<>(data, labels);  // Return Pair of data and labels
+        return new Pair<>(data, labels);  
     }
 
-    // Generates a 2D dataset with two concentric circles
+    /**
+     * Generates a 2D dataset with two concentric circles.
+     * <p>
+     * The circles are created with a specified scaling factor to control their distance.
+     * </p>
+     *
+     * @param nSamples The total number of data points to generate.
+     * @param noise The noise level added to the data points.
+     * @param factor The scaling factor for the second circle.
+     * @return A {@link Pair} containing the generated data points and their corresponding labels.
+     */
+
     public Pair<List<double[]>, List<Integer>> makeCircles(int nSamples, double noise, double factor) {
         List<double[]> data = new ArrayList<>();
         List<Integer> labels = new ArrayList<>();
@@ -94,13 +161,13 @@ public class SyntheticDataGenerator {
         for (int i = 0; i < nSamples / 2; i++) {
             double[] point1 = new double[2];
             double angle1 = 2 * Math.PI * i / (nSamples / 2);
-            point1[0] = Math.cos(angle1); // X coordinate for the first circle
-            point1[1] = Math.sin(angle1); // Y coordinate for the first circle
+            point1[0] = Math.cos(angle1); // X first circle
+            point1[1] = Math.sin(angle1); // Y first circle
             
             double[] point2 = new double[2];
             double angle2 = 2 * Math.PI * (i + nSamples / 2) / (nSamples / 2);
-            point2[0] = factor * Math.cos(angle2); // X coordinate for the second circle (scaled by factor)
-            point2[1] = factor * Math.sin(angle2); // Y coordinate for the second circle
+            point2[0] = factor * Math.cos(angle2); // X second circle (scaled by factor)
+            point2[1] = factor * Math.sin(angle2); // Y second circle
             
             // Add noise
             point1[0] += random.nextGaussian() * noise;
@@ -114,6 +181,6 @@ public class SyntheticDataGenerator {
             labels.add(1); // Label for the second circle
         }
 
-        return new Pair<>(data, labels);  // Return Pair of data and labels
+        return new Pair<>(data, labels);  
     }
 }
