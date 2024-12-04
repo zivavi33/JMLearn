@@ -30,6 +30,16 @@
     </dependencies>
 
     <build>
+        <resources>
+            <!-- Include resources from src/main/resources -->
+            <resource>
+                <directory>src/main/resources/</directory>
+                <includes>
+                    <include>**/*.csv</include> <!-- Include only CSV files -->
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <!-- Surefire plugin for running JUnit 5 tests -->
             <plugin>
@@ -49,16 +59,14 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>javadoc</goal> <!-- Goal to generate Javadoc -->
+                            <goal>javadoc</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <!-- Disable deprecated -author flag -->
                     <additionalparam>-no-author</additionalparam>
-                    <!-- Output directory for Javadoc -->
                     <destDir>${project.build.directory}/docs</destDir>
-                    <accessLevel>protected</accessLevel> <!-- Optional: controls visibility -->
+                    <accessLevel>protected</accessLevel>
                 </configuration>
             </plugin>
 
@@ -68,7 +76,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>net.acimon.jmlearn.Main</mainClass> <!-- Fully qualified name of your Main class -->
+                    <mainClass>net.acimon.jmlearn.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>

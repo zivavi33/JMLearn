@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.acimon.jmlearn.utils.TypeCaster;
 import net.acimon.jmlearn.utils.CSVLoader;
+import net.acimon.jmlearn.datasets.DataSetLoader;
 import net.acimon.jmlearn.utils.DatasetSplitter;
 import net.acimon.jmlearn.models.neighbors.KNN;
 
@@ -13,8 +14,13 @@ import net.acimon.jmlearn.models.neighbors.KNN;
 public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("Hello world!");
-        CSVLoader loader = new CSVLoader(true); // Headers enabled
-        List<Object[]> rows = loader.loadCSV("src/main/resources/datasets/iris_dataset.csv");
+        
+        // OPTION 1: load dataset from local csv
+        // CSVLoader loader = new CSVLoader(true); 
+        // List<Object[]> rows = loader.loadCSV("src/main/resources/datasets/iris_dataset.csv");
+
+        // OPTION 2: load "build-in" dataset (iris for example)
+        List<Object[]> rows = DataSetLoader.loadCSVData("iris", true);
 
         List<List<Double>> trainRows = new ArrayList<>();
         List<Integer> labelRows = new ArrayList<>();

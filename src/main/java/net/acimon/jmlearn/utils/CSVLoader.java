@@ -11,29 +11,64 @@ public class CSVLoader {
     public CSVLoader(boolean headers) {
         this.headers = headers;
     }
-
     public List<Object[]> loadCSV(String filePath) throws IOException {
-        List<Object[]> rows = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
+            return parseCSV(br);
+        }
+    }
 
-            // Check the first line for headers if headers=true
-            if ((line = br.readLine()) != null) {
-                String[] firstRow = line.split(",");
+    public List<Object[]> loadCSV(InputStream inputStream) throws IOException {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            return parseCSV(br);
+        }
+    }
 
-                if (headers) {
-                    // Save the headers and move to the next line
-                    this.headerArray = firstRow;
-                } else {
-                    // If no headers, treat the first row as data
-                    rows.add(convertRowToData(firstRow));
-                }
+    // public List<Object[]> loadCSV(String filePath) throws IOException {
+    //     List<Object[]> rows = new ArrayList<>();
+    //     try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+    //         String line;
+
+    //         // Check the first line for headers if headers=true
+    //         if ((line = br.readLine()) != null) {
+    //             String[] firstRow = line.split(",");
+
+    //             if (headers) {
+    //                 // Save the headers and move to the next line
+    //                 this.headerArray = firstRow;
+    //             } else {
+    //                 // If no headers, treat the first row as data
+    //                 rows.add(convertRowToData(firstRow));
+    //             }
+    //         }
+
+    //         // Process remaining rows
+    //         while ((line = br.readLine()) != null) {
+    //             rows.add(convertRowToData(line.split(",")));
+    //         }
+    //     }
+
+    //     return rows;
+    // }
+    private List<Object[]> parseCSV(BufferedReader br) throws IOException {
+        List<Object[]> rows = new ArrayList<>();
+        String line;
+
+        // Check the first line for headers if headers=true
+        if ((line = br.readLine()) != null) {
+            String[] firstRow = line.split(",");
+
+            if (headers) {
+                // Save the headers and move to the next line
+                this.headerArray = firstRow;
+            } else {
+                // If no headers, treat the first row as data
+                rows.add(convertRowToData(firstRow));
             }
+        }
 
-            // Process remaining rows
-            while ((line = br.readLine()) != null) {
-                rows.add(convertRowToData(line.split(",")));
-            }
+        // Process remaining rows
+        while ((line = br.readLine()) != null) {
+            rows.add(convertRowToData(line.split(",")));
         }
 
         return rows;
