@@ -20,10 +20,17 @@ import java.util.Arrays;
  *     <li>Calculate classification accuracy using the static {@code accuracy} method that call {@code Accuracy.calculate}.</li>
  *     <li>Custom exceptions for invalid k values and empty datasets.</li>
  * </ul>
+ * 
  *
  * @see EuclideanDistance for euclidean distance calculation.
  * @see ManhattanDistance for manhattan distance calculation (L1).
  * @see Accuracy for accuracy calculation.
+ *
+ * Constructors Summary:
+ * <ul>
+ *     <li>{@link KNN#KNN(int, String)} - Constructs a KNN object with a specified number of neighbors (k) and a distance metric ("euclidean" or "manhattan").</li>
+ *     <li>{@link KNN#KNN()} - Constructs a KNN object with default settings (k = 3 and Euclidean distance).</li>
+ * </ul>
  */
 public class KNN {
     private int _k; // The number of neighbors to consider

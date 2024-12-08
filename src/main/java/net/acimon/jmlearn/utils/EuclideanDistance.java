@@ -28,4 +28,16 @@ public class EuclideanDistance {
         }
         return Math.sqrt(sum);
     }
+    public static double calculate(double[] x1, double[] x2, boolean squared) {
+        if (x1.length != x2.length) {
+            throw new IllegalArgumentException("Points must have the same number of dimensions.");
+        }
+
+        double sum = 0.0;
+        for (int i = 0; i < x1.length; i++) {
+            sum += Math.pow(x1[i] - x2[i], 2);
+        }
+        return squared ? sum : Math.sqrt(sum);
+    }
+
 }

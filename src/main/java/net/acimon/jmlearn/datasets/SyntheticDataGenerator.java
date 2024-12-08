@@ -1,6 +1,6 @@
 package net.acimon.jmlearn.datasets;
 
-import net.acimon.jmlearn.utils.CSVLoader;
+
 import net.acimon.jmlearn.utils.Pair;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +31,15 @@ import java.util.Random;
 
 public class SyntheticDataGenerator {
 
-    private Random random;
+    private Random _random;
 
 
 
     public SyntheticDataGenerator(Long seed) {
         if (seed != null) {
-            this.random = new Random(seed);
+            this._random = new Random(seed);
         } else {
-            this.random = new Random();
+            this._random = new Random();
         }
     }
 
@@ -70,23 +70,23 @@ public class SyntheticDataGenerator {
         for (int i = 0; i < nClusters; i++) {
             double[] centroid = new double[nDimensions];
             for (int j = 0; j < nDimensions; j++) {
-                centroid[j] = random.nextDouble() * 10;  // Random centroid position
+                centroid[j] = _random.nextDouble() * 10;  // Random centroid position
             }
             centroids.add(centroid);
         }
 
         // Generate data points around the centroids and assign labels
         for (int i = 0; i < nSamples; i++) {
-            int clusterIndex = random.nextInt(nClusters);
+            int clusterIndex = _random.nextInt(nClusters);
             double[] centroid = centroids.get(clusterIndex);
             double[] point = new double[nDimensions];
             
            
             for (int j = 0; j < nDimensions; j++) {
-                point[j] = centroid[j] + random.nextGaussian() * clusterStd;
+                point[j] = centroid[j] + _random.nextGaussian() * clusterStd;
             }
             data.add(point);
-            labels.add(clusterIndex);  // Assign label based on the cluster
+            labels.add(clusterIndex);  
         }
 
         return new Pair<>(data, labels);  
@@ -112,13 +112,13 @@ public class SyntheticDataGenerator {
         // points for the first moon (upper half-circle)
         for (int i = 0; i < nSamples / 2; i++) {
             double[] point1 = new double[2];
-            double angle = Math.PI * i / (nSamples / 2);  // Angle 
+            double angle = Math.PI * i / (nSamples / 2);  
             point1[0] = Math.cos(angle);  // X 
             point1[1] = Math.sin(angle);  // Y 
     
             // Add noise
-            point1[0] += random.nextGaussian() * noise;
-            point1[1] += random.nextGaussian() * noise;
+            point1[0] += _random.nextGaussian() * noise;
+            point1[1] += _random.nextGaussian() * noise;
     
             data.add(point1);
             labels.add(0); 
@@ -132,8 +132,8 @@ public class SyntheticDataGenerator {
             point2[1] = -Math.sin(angle) + verticalShift;  // Y coordinate (shifted vertically by verticalShift)
     
             // Add noise
-            point2[0] += random.nextGaussian() * noise;
-            point2[1] += random.nextGaussian() * noise;
+            point2[0] += _random.nextGaussian() * noise;
+            point2[1] += _random.nextGaussian() * noise;
     
             data.add(point2);
             labels.add(1); 
@@ -166,19 +166,19 @@ public class SyntheticDataGenerator {
             
             double[] point2 = new double[2];
             double angle2 = 2 * Math.PI * (i + nSamples / 2) / (nSamples / 2);
-            point2[0] = factor * Math.cos(angle2); // X second circle (scaled by factor)
+            point2[0] = factor * Math.cos(angle2); // X second circle 
             point2[1] = factor * Math.sin(angle2); // Y second circle
             
             // Add noise
-            point1[0] += random.nextGaussian() * noise;
-            point1[1] += random.nextGaussian() * noise;
-            point2[0] += random.nextGaussian() * noise;
-            point2[1] += random.nextGaussian() * noise;
+            point1[0] += _random.nextGaussian() * noise;
+            point1[1] += _random.nextGaussian() * noise;
+            point2[0] += _random.nextGaussian() * noise;
+            point2[1] += _random.nextGaussian() * noise;
 
             data.add(point1);
-            labels.add(0); // Label for the first circle
+            labels.add(0); // Label first circle
             data.add(point2);
-            labels.add(1); // Label for the second circle
+            labels.add(1); // Label second circle
         }
 
         return new Pair<>(data, labels);  
