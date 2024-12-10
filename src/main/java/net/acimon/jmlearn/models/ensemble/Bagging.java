@@ -3,13 +3,15 @@ package net.acimon.jmlearn.models.ensemble;
 import net.acimon.jmlearn.models.Model;
 import net.acimon.jmlearn.utils.Pair;
 import net.acimon.jmlearn.utils.Counter;
-import net.acimon.jmlearn.utils.TypeCaster;
 import net.acimon.jmlearn.models.ensemble.Bagging;
+
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.*;
+
+import java.util.logging.Logger;
 
 
 public class Bagging implements Model {
@@ -21,6 +23,9 @@ public class Bagging implements Model {
     private Random _random;
     public List<Model> _weakLearners;
     private int _numWorkers;
+    private static final Logger logger = Logger.getLogger(Bagging.class.getName());
+
+    
 
 
 
@@ -32,12 +37,11 @@ public class Bagging implements Model {
         this._weakLearners = new ArrayList<>(); 
         this._random = (seed != null) ? new Random(seed) : new Random(); 
         this._numWorkers = (numWorkers != null) ? numWorkers:bagsNumber;
+     
         
     }
 
     private Pair<double[][], int[]> bootSrtpAgg(double[][] _X_train, int[] _Y_train){
-        // List<double[]> xBag = new ArrayList<>();
-        // List<Integer> yBag = new ArrayList<>();
         int sampleSize = (int) Math.round(_X_train.length * _sampleSize);
         int dataSize = _X_train.length;
         int tempIdx;
@@ -70,10 +74,10 @@ public class Bagging implements Model {
             futures.add(executor.submit(() -> {
                 try {
                     Model weakLearner = inFit(X, y);
-                    System.out.println("Successfully trained weak learner " + finalI);  // Debug log
+                    logger.info("Successfully trained weak learner " + finalI);  
                     return weakLearner;
                 } catch (Exception e) {
-                    System.err.println("Error during training weak learner " + finalI + ": " + e.getMessage());
+                    logger.severe("Error during training weak learner " + finalI + ": " + e.getMessage());
                     return null;
                 }
             }));
@@ -87,7 +91,7 @@ public class Bagging implements Model {
                     _weakLearners.add(weakLearner); // Only add non-null models
                 }
             } catch (InterruptedException | ExecutionException e) {
-                System.err.println("Error when collecting future result: " + e.getMessage());
+                logger.severe("Error when collecting future result: " + e.getMessage());
             }
         }
     
@@ -95,12 +99,13 @@ public class Bagging implements Model {
     
         // Check if weak learners are properly added
         if (_weakLearners.isEmpty()) {
-            System.err.println("No weak learners were added!");
+            logger.severe("No weak learners were added!");
         }
     }
     
     @Override
     public void fit(double[][] _X_train){
+        logger.severe("fit method without labels not supported for bootStrpAgg model");
         throw new UnsupportedOperationException("fit method without labels not supported for bootStrpAgg model");
     }
 
@@ -130,8 +135,8 @@ public class Bagging implements Model {
 
     @Override
     public Model clone() {
+        logger.severe("clone method is not supported");
         throw new UnsupportedOperationException("clone method is not supported");
-
     }
 
     public Integer getSeed(){
