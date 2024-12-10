@@ -1,8 +1,11 @@
 package net.acimon.jmlearn.models.neighbors;
+import net.acimon.jmlearn.models.Model;
 
 import net.acimon.jmlearn.utils.EuclideanDistance;
 import net.acimon.jmlearn.utils.ManhattanDistance;
 import net.acimon.jmlearn.metrics.Accuracy;
+
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
@@ -32,7 +35,7 @@ import java.util.Arrays;
  *     <li>{@link KNN#KNN()} - Constructs a KNN object with default settings (k = 3 and Euclidean distance).</li>
  * </ul>
  */
-public class KNN {
+public class KNN implements Model{
     private int _k; // The number of neighbors to consider
     private double[][] _X_train; // Training data 
     private int[] _Y_train; // Training labels
@@ -62,6 +65,22 @@ public class KNN {
         this(DEFAULT_K,VALID_DISTANCE_METRICS[0]);
     }
 
+    public KNN(KNN other) {
+        this._k = other._k; 
+        this._distanceMetric = other._distanceMetric; 
+
+        if (other._X_train != null){
+            this._X_train = new double[other._X_train.length][];
+            for (int i = 0; i < other._X_train.length; i++) {
+                this._X_train[i] = other._X_train[i].clone(); // Deep copy of each row in the 2D array
+            }
+
+            this._Y_train = other._Y_train.clone(); // Deep copy of the 1D array
+        }
+    }
+    public Model clone(){
+        return (new KNN(this));
+    }
     /**
      * Sets the number of neighbors to consider for classification.
      * 
@@ -118,6 +137,11 @@ public class KNN {
         this._X_train = X;
         this._Y_train = Y;
     }
+    @Override
+    public void fit(double[][] dataPoints) {
+        // Not applicable for unsupervised models
+        throw new UnsupportedOperationException("fit method without labels not supported for supervised model");
+    }
 
     /**
      * Makes predictions based on the test data using the trained KNN model.
@@ -126,6 +150,7 @@ public class KNN {
      * @return An array of predicted class labels.
      * @throws IllegalArgumentException if the test data array is empty or feature dimensions don't match.
      */
+    @Override
     public int[] predict(double[][] X) {
         if (X.length == 0) {
             throw new IllegalArgumentException("Test data cannot be empty.");
@@ -144,7 +169,7 @@ public class KNN {
         }
         return predictions;
     }
-
+  
     /**
      * Calculates the classification accuracy by comparing the true labels to the predicted labels.
      * 
@@ -155,6 +180,7 @@ public class KNN {
     public static double accuracy(int[] y_true, int[] y_pred) {
         return Accuracy.calculate(y_true, y_pred);
     }
+    
 
     /**
      * Helper method for predicting the class of a single test point.
@@ -186,6 +212,8 @@ public class KNN {
         // sort the indices array in ascending order based on the distances stored in the distances array.
         // meaning that kIndexes[0] will hold the index of the _X_train sample with the shortest distance.
         Arrays.sort(kIndexes, (i, j) -> Double.compare(distances[i], distances[j]));
+
+  
 
         // Count the occurrences of each label among the nearest k neighbors 
         Map<Integer, Integer> labelCounts = new HashMap<>();

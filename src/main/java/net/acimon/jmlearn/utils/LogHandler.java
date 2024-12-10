@@ -12,19 +12,16 @@ import java.util.logging.*;
  *
  * <h2>Usage Example</h2>
  * <pre>
-    // Console handler that outputs to stdout and stderr
     ConsoleHandler consoleHandler = new ConsoleHandler();
     consoleHandler.setLevel(Level.ALL);  // Set the level to log all levels
     logger.addHandler(consoleHandler);
 
-    // Setting different log levels
     logger.setLevel(Level.ALL); // This can be adjusted to control the level of logging
     
-    // Example log messages
     logMessage("This is an INFO message", Level.INFO);
     logMessage("This is a WARNING message", Level.WARNING);
     logMessage("This is an ERROR message", Level.SEVERE);
-    logMessage("This is a CRITICAL message", Level.SEVERE);  // Treating SEVERE as CRITICAL
+    logMessage("This is a CRITICAL message", Level.SEVERE);  
  * </pre>
  * <p>
  * The logMessage method can be called to log a message at the specified severity level (INFO, WARNING, or SEVERE).

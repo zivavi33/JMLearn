@@ -1,4 +1,6 @@
 package net.acimon.jmlearn.models.cluster;
+import net.acimon.jmlearn.models.Model;
+
 
 
 import net.acimon.jmlearn.utils.EuclideanDistance;
@@ -37,6 +39,14 @@ import org.jfree.chart.ChartPanel;
  *     <li>{@link KMeans#KMeans(int, int, boolean)} - Constructs a KMeans object with a specified number of clusters, maximum iterations, and a plotting option.</li>
  *     <li>{@link KMeans#KMeans(int, int, Long)} - Constructs a KMeans object with a specified number of clusters, maximum iterations, and random seed.</li>
  * </ul>
+ * <h3>Getter Summary</h3>
+ * <ul>
+ *     <li>{@link KMeans#getK()} - Returns the number of clusters (K) used in the KMeans algorithm.</li>
+ *     <li>{@link KMeans#getMaxIter()} - Returns the maximum number of iterations allowed during the clustering process.</li>
+ *     <li>{@link KMeans#getCentroids()} - Returns the current centroids of the clusters.</li>
+ *     <li>{@link KMeans#getClusters()} - Returns the list of clusters where each cluster contains the indices of the data points assigned to that cluster.</li>
+ *     <li>{@link KMeans#getSeed()} - Returns the random seed used for centroid initialization.</li>
+ * </ul>
  *
  * <h2>Visualization</h2>
  * <p>
@@ -45,7 +55,7 @@ import org.jfree.chart.ChartPanel;
  * </p>
  *
 */
-public class KMeans {
+public class KMeans implements Model{
     private int _k; // Number of clusters
     private int _maxIter; // Maximum number of iterations
     private double[][] _X; // Input data
@@ -92,9 +102,52 @@ public class KMeans {
         }
     }
 
-    /**
-     * Default constructor for KMeans with default k and max iterations.
-     */
+    //constructors
+    // Copy constructor
+    public KMeans(KMeans other) {
+        this._k = other._k; 
+        this._maxIter = other._maxIter;
+        this._seed = other._seed;
+        this._plotSteps = other._plotSteps;
+        
+        
+        if (other._X != null) {
+            this._X = new double[other._X.length][];
+            for (int i = 0; i < other._X.length; i++) {
+                this._X[i] = other._X[i].clone(); // Deep copy of each row in the 2D array
+            }
+        }
+
+        
+        if (other._centroids != null) {
+            this._centroids = new double[other._centroids.length][];
+            for (int i = 0; i < other._centroids.length; i++) {
+                this._centroids[i] = other._centroids[i].clone(); // Deep copy of each row in the 2D array
+            }
+        }
+
+       
+        if (other._clusters != null) {
+            this._clusters = new ArrayList<>(other._clusters.size());
+            for (List<Integer> cluster : other._clusters) {
+                this._clusters.add(new ArrayList<>(cluster)); // Deep copy of each cluster list
+            }
+        }
+
+        // Copy the random generator (can be the same since it's stateless with seed)
+        this._random = (other._random != null) ? new Random(other._random.nextLong()) : new Random();
+
+        // initialize the JFrame and ChartPanel if plotSteps is true
+        if (this._plotSteps) {
+            this._frame = new JFrame("KMeans Clustering");
+            this._chartPanel = new ChartPanel(null);  // Start without chart
+            this._frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            this._chartPanel.setPreferredSize(new Dimension(800, 600));
+            this._frame.getContentPane().add(this._chartPanel);
+            this._frame.pack();
+            this._frame.setVisible(true);
+        }
+    }
     public KMeans() {
         this(DEFAULT_K, DEFAULT_MAX_ITER,null, false);
     }
@@ -106,6 +159,11 @@ public class KMeans {
     }
     public KMeans(int k, int maxIter) {
         this(k, maxIter,null,false );
+    }
+    
+    @Override
+    public Model clone() {
+        return new KMeans(this);
     }
 
     /**
@@ -150,6 +208,11 @@ public class KMeans {
 
 
         }
+    }
+    @Override
+    public void fit(double[][] dataPoints, int[] labels) {
+        // Not applicable for unsupervised models
+        throw new UnsupportedOperationException("fit method with labels not supported for unsupervised model");
     }
 
     /**
@@ -235,6 +298,7 @@ public class KMeans {
      * @param X The input data.
      * @return An array of predicted cluster labels.
      */
+    @Override
     public int[] predict(double[][] X) {
         int[] labels = new int[X.length];
         for (int i = 0; i < X.length; i++) {
@@ -286,6 +350,8 @@ public class KMeans {
      * 
      * @return The inertia score (sum of squared distances).
      */
+
+  
     public double score() {
         double score = 0.0;
         for (int i = 0; i < _X.length; i++) {
@@ -307,26 +373,23 @@ public class KMeans {
     private void plotLiveClusters(int iter, double[][] data, double[][] centroids, List<List<Integer>> clusters) {
         List<double[]> points = new ArrayList<>();
         List<Integer> labels = new ArrayList<>();
-    
-        // Prepare points and labels for PlotData.plotData
+
         for (int i = 0; i < data.length; i++) {
             points.add(new double[]{data[i][0], data[i][1]});
             int clusterIndex = _closestCentroid(data[i]);
             labels.add(clusterIndex);
         }
         try {
-            // Slow down the loop to visualize each step (500ms delay)
+            // Slow  the loop to visualize.
             Thread.sleep(50); 
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    
-        // Plot the clusters with centroids
-        // Now, we plot the centroids as well
+
         PlotData.plotDataWithCentroids(points, labels, centroids, "KMeans Iteration " + iter, _frame, _chartPanel);
     }
     
-    // Getters for K, max iterations, etc.
+    // Getters.
     public int getK() {
         return _k;
     }
