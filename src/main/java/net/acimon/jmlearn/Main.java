@@ -13,6 +13,7 @@ import net.acimon.jmlearn.datasets.SyntheticDataGenerator;
 import net.acimon.jmlearn.utils.DatasetSplitter;
 import net.acimon.jmlearn.models.ensemble.Bagging;
 import net.acimon.jmlearn.models.neighbors.KNN;
+import net.acimon.jmlearn.models.tree.DecisionTree;
 import net.acimon.jmlearn.utils.PlotData;
 import net.acimon.jmlearn.datasets.SyntheticDataGenerator;
 
@@ -52,7 +53,7 @@ public class Main {
         // List<Object[]> rows = loader.loadCSV("src/main/resources/datasets/iris_dataset.csv");
 
         // OPTION 2: load "build-in" dataset (iris for example)
-        List<Object[]> rows = DataSetLoader.loadCSVData("iris", true);
+        List<Object[]> rows = DataSetLoader.loadCSVData("breast_cancer", true);
 
         List<List<Double>> trainRows = new ArrayList<>();
         List<Integer> labelRows = new ArrayList<>();
@@ -61,21 +62,21 @@ public class Main {
         for (Object[] row : rows) {
             // Convert first 4 elements to doubles for trainRows
             List<Double> trainRow = new ArrayList<>();
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 30; i++) {
                 trainRow.add(Double.parseDouble(row[i].toString()));
             }
             trainRows.add(trainRow);
 
             // Convert the 5th element (label) to integer for labelRows
             TypeCaster typeCaster = new TypeCaster();
-            int value = typeCaster.castToInt(row[4].toString());
+            int value = typeCaster.castToInt(row[30].toString());
             labelRows.add(value);
         }
 
         // Convert List<List<Double>> to double[][]
-        double[][] trainData = new double[trainRows.size()][4];
+        double[][] trainData = new double[trainRows.size()][30];
         for (int i = 0; i < trainRows.size(); i++) {
-            for (int j = 0; j < 4; j++) {
+            for (int j = 0; j < 30; j++) {
                 trainData[i][j] = trainRows.get(i).get(j);
             }
         }
@@ -90,7 +91,7 @@ public class Main {
         System.out.println("Label Rows: " + labelData.length);
 
         // Split the dataset
-        DatasetSplitter datasetSplitter = new DatasetSplitter(0.2, 42L);
+        DatasetSplitter datasetSplitter = new DatasetSplitter(0.25, 23196L);
         DatasetSplitter.SplitResult result = datasetSplitter.split(trainData, labelData);
 
         // Optionally print the split result to verify
@@ -98,10 +99,11 @@ public class Main {
         System.out.println("Test data size: " + result.getValFeatures().length);
 
         // Set up the base model (e.g., KNN)
-        KNN knn = new KNN(5, "euclidean");
+        // KNN knn = new KNN(5, "euclidean");
+        DecisionTree model = new DecisionTree(10);
 
         // Create the Bagging model using the base KNN model
-        Bagging bagging = new Bagging(knn, 10, 0.8, 42, 4); // 10 bags, 80% sample size, 4 workers
+        Bagging bagging = new Bagging(model, 10, 0.8, 42, 10); // 10 bags, 80% sample size, 4 workers
 
         // Train the Bagging model
         bagging.fit(result.getTrainFeatures(), result.getTrainLabels());
@@ -113,7 +115,7 @@ public class Main {
         for (int i = 0; i < results_clf.length; i++) {
             System.out.println("Predicted label: " + results_clf[i] + ", Actual label: " + result.getValLabels()[i]);
         }
-        System.out.println("Accuracy: " + KNN.accuracy(result.getValLabels(), results_clf));
+        System.out.println("Accuracy: " + DecisionTree.accuracy(result.getValLabels(), results_clf));
     }
 }
 // package net.acimon.jmlearn;
