@@ -12,9 +12,9 @@ import java.util.logging.Logger;
  */
 public class DecisionTree implements Model {
 
-    private int minSamplesSplit;
-    private int maxDepth;
-    private int nFeatures;
+    private int _minSamplesSplit;
+    private int _maxDepth;
+    private int _nFeatures;
     private Node root;
     private static final Logger logger = Logger.getLogger(Bagging.class.getName());
 
@@ -24,9 +24,9 @@ public class DecisionTree implements Model {
     private static final int DEFAULT_N_FEATURES = -1; // Use -1 to indicate "use all features".
 
     public DecisionTree(int minSamplesSplit, int maxDepth, int nFeatures) {
-        this.minSamplesSplit = minSamplesSplit;
-        this.maxDepth = maxDepth;
-        this.nFeatures = nFeatures;
+        this._minSamplesSplit = minSamplesSplit;
+        this._maxDepth = maxDepth;
+        this._nFeatures = nFeatures;
     }
 
     public DecisionTree(int maxDepth) {
@@ -38,14 +38,22 @@ public class DecisionTree implements Model {
     }
 
     public DecisionTree(DecisionTree other) {
-        this.minSamplesSplit = other.minSamplesSplit;
-        this.maxDepth = other.maxDepth;
-        this.nFeatures = other.nFeatures;
+        this._minSamplesSplit = other._minSamplesSplit;
+        this._maxDepth = other._maxDepth;
+        this._nFeatures = other._nFeatures;
         if (other.root != null) {
             this.root = cloneNode(other.root);
         }
     }
-
+    public int getMinSamplesSplit() {
+        return _minSamplesSplit;
+    }
+    public int getMaxDepth() {
+        return _maxDepth;
+    }
+    public int getNFeatures() {
+        return _nFeatures;
+    }
     private Node cloneNode(Node original) {
         if (original == null) return null;
         
@@ -89,13 +97,13 @@ public class DecisionTree implements Model {
     private Node growTree(double[][] X, int[] Y, int depth) {
         // Determine number of features to use
         int totalFeatures = X[0].length;
-        int featuresToConsider = (nFeatures == -1) ? totalFeatures : Math.min(nFeatures, totalFeatures);
+        int featuresToConsider = (_nFeatures == -1) ? totalFeatures : Math.min(_nFeatures, totalFeatures);
 
         int nSamples = X.length;
         int nLabels = (int) Arrays.stream(Y).distinct().count();
 
         // Stopping criteria
-        if (depth >= maxDepth || nLabels == 1 || nSamples < minSamplesSplit) {
+        if (depth >= _maxDepth || nLabels == 1 || nSamples < _minSamplesSplit) {
             return new Node(mostCommonLabel(Y));
         }
 
@@ -141,9 +149,6 @@ public class DecisionTree implements Model {
                 // Skip if split is trivial
                 if (leftIndices.isEmpty() || rightIndices.isEmpty()) continue;
 
-                // Calculate gain
-                int[] leftYArray = leftIndices.stream().mapToInt(i -> Y[i]).toArray();
-                int[] rightYArray = rightIndices.stream().mapToInt(i -> Y[i]).toArray();
                 
                 double gain = informationGain(Y, 
                     leftIndices.stream().mapToInt(Integer::intValue).toArray(), 

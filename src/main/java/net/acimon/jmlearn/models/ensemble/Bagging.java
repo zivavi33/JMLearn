@@ -16,12 +16,12 @@ import java.util.logging.Logger;
 
 public class Bagging implements Model {
     
-    public Model _model;
+    private Model _model;
     private int _bagsNumber;
     private double _sampleSize;
     private final Integer _seed;
     private Random _random;
-    public List<Model> _weakLearners;
+    private List<Model> _weakLearners;
     private int _numWorkers;
     private static final Logger logger = Logger.getLogger(Bagging.class.getName());
 
@@ -39,6 +39,16 @@ public class Bagging implements Model {
         this._numWorkers = (numWorkers != null) ? numWorkers:bagsNumber;
      
         
+    }
+    public int getBagsNumber() {
+        return _bagsNumber;
+    }
+
+    public double getSampleSize() {
+        return _sampleSize;
+    }
+    public int getNumWorkers() {
+        return _numWorkers;
     }
 
     private Pair<double[][], int[]> bootSrtpAgg(double[][] _X_train, int[] _Y_train){

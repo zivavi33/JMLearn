@@ -14,6 +14,7 @@ import net.acimon.jmlearn.utils.DatasetSplitter;
 import net.acimon.jmlearn.models.ensemble.Bagging;
 import net.acimon.jmlearn.models.neighbors.KNN;
 import net.acimon.jmlearn.models.tree.DecisionTree;
+import net.acimon.jmlearn.models.ensemble.RandomForestTree;
 import net.acimon.jmlearn.utils.PlotData;
 import net.acimon.jmlearn.datasets.SyntheticDataGenerator;
 
@@ -100,16 +101,17 @@ public class Main {
 
         // Set up the base model (e.g., KNN)
         // KNN knn = new KNN(5, "euclidean");
-        DecisionTree model = new DecisionTree(10);
+        // DecisionTree model = new DecisionTree(10);
+        RandomForestTree model = new RandomForestTree(10, 10, 0.7);
 
         // Create the Bagging model using the base KNN model
-        Bagging bagging = new Bagging(model, 10, 0.8, 42, 10); // 10 bags, 80% sample size, 4 workers
+        // Bagging bagging = new Bagging(model, 10, 0.8, 42, 10); // 10 bags, 80% sample size, 4 workers
 
         // Train the Bagging model
-        bagging.fit(result.getTrainFeatures(), result.getTrainLabels());
+        model.fit(result.getTrainFeatures(), result.getTrainLabels());
 
         // Predict using the Bagging model
-        int[] results_clf = bagging.predict(result.getValFeatures());
+        int[] results_clf = model.predict(result.getValFeatures());
 
         // Print predictions and accuracy
         for (int i = 0; i < results_clf.length; i++) {
